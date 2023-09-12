@@ -1,0 +1,22 @@
+name: nix-cache-check
+description: Check that the contents of a Nix cache or remote store is up-to-date
+inputs:
+  derivation:
+    description: 'The derivation to build such as "github:holochain/holochain#devShells.x86_64-darwin.holonix"'
+    required: true
+  extra_build_args:
+    description: 'Extra args to pass to `nix build`'
+    required: false
+    default: ''
+  permit_build_derivations:
+    description: "The names of derivations which are permitted to be build rather than fetched from the cache"
+    required: false
+    default: '[]'
+runs:
+  using: 'docker'
+  # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
+  image: 'Dockerfile'
+  args:
+    - --derivation ${{ inputs.derivation }}
+    - --extra-build-args ${{ inputs.extra_build_args }}
+    - --permit-build-derivations ${{ join(inputs.permit_build_derivations, ',') }}
