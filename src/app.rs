@@ -11,6 +11,8 @@ fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
 }
 
 pub fn run_app() -> anyhow::Result<()> {
+    println!("Running nix");
+
     let mut cmd = std::process::Command::new("nix");
     cmd.stderr(Stdio::piped())
         .arg("build")
