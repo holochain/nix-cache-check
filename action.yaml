@@ -18,7 +18,7 @@ runs:
   image: 'Dockerfile'
   args:
     - /nix-cache-check
-    - ${{ inputs.derivation }}
-    - ${{ join(inputs.permit_build_derivations, ',') }}
   env:
+    DERIVATION: ${{ inputs.derivation }}
     EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
+    PERMIT_BUILD_DERIVATIONS: ${{ join(inputs.permit_build_derivations, ',') }}

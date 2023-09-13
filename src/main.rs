@@ -1,12 +1,9 @@
 
-use app::{App, run_app};
-use clap::Parser;
+use app::run_app;
 
 mod parser;
 mod app;
 
 fn main() -> anyhow::Result<()> {
-    let args = App::parse();
-
-    run_app(args)
+    run_app()
 }
