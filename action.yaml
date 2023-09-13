@@ -20,4 +20,4 @@ runs:
     - ${{ inputs.derivation }}
     - ${{ join(inputs.permit_build_derivations, ',') }}
     - --
-    - '${{ inputs.extra_build_args }}'
+    - ${{ inputs.extra_build_args }}
