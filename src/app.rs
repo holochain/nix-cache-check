@@ -48,11 +48,11 @@ pub fn run_app() -> anyhow::Result<()> {
         cache_info.get_derivations_to_fetch().len()
     );
     stdout().flush()?;
-    
+
     if validate(
         from_csv(std::env::var("PERMIT_BUILD_DERIVATIONS").unwrap_or_else(|_| "".to_string()).as_str())?,
         &cache_info,
-    ) {
+    )? {
         println!("Validation passed!");
     } else {
         eprintln!("Validation failed!");
@@ -70,14 +70,12 @@ pub fn run_app() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInfo) -> bool {
+pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInfo) -> anyhow::Result<bool> {
     let mut all_passed = true;
 
     for to_build in cache_info.get_derivations_to_build() {
         let to_build_name: String = to_build
-            .split(".")
-            .next()
-            .unwrap()
+            .strip_suffix(".drv").ok_or(anyhow!("Not a derivation? {}", to_build))?
             .split("-")
             .skip(1)
             .collect::<Vec<&str>>()
@@ -95,5 +93,5 @@ pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInf
         all_passed = false;
     }
 
-    all_passed
+    Ok(all_passed)
 }
