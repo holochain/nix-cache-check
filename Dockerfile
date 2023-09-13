@@ -4,7 +4,7 @@ FROM registry.hub.docker.com/library/rust:1.72-alpine
 WORKDIR /builder
 RUN cargo init --bin
 COPY Cargo.toml Cargo.lock ./
-RUN cargo build --locked --release
+RUN cargo fetch --locked
 COPY ./src ./src
 RUN cargo install --locked --path .
 RUN cp /usr/local/cargo/bin/nix-cache-check /
