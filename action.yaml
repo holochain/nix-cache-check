@@ -17,6 +17,7 @@ runs:
   # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
   image: 'Dockerfile'
   args:
+    - /nix-cache-check
     - ${{ inputs.derivation }}
     - ${{ join(inputs.permit_build_derivations, ',') }}
   env:
