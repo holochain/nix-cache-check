@@ -9,7 +9,7 @@ COPY ./src ./src
 RUN cargo install --locked --path .
 RUN cp $(which nix-cache-check) /bin/
 
-ENTRYPOINT ["nix-cache-check"]
+ENTRYPOINT ["cargo", "run"]
 
 # FROM registry.hub.docker.com/library/alpine:3
 
