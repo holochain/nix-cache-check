@@ -1,6 +1,6 @@
 use std::{
     collections::HashSet,
-    process::Stdio,
+    process::{Stdio, exit}, io::{stdout, Write},
 };
 
 use clap::Parser;
@@ -14,13 +14,13 @@ pub struct App {
     #[arg(long)]
     derivation: String,
 
-    /// Extra args to be passed to `nix build`
-    #[arg(long)]
-    extra_build_args: Option<String>,
-
     /// Comma-separated values containing the names of derivations to allow building rather than fetching
     #[arg(long, value_parser = from_csv)]
     permit_build_derivations: Option<HashSet<String>>,
+
+    /// Extra args to be passed to `nix build`
+    #[arg(last = true)]
+    extra_build_args: Vec<String>,
 }
 
 fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
@@ -36,13 +36,20 @@ pub fn run_app(args: App) -> anyhow::Result<()> {
         .arg("--log-format")
         .arg("raw");
 
-    if let Some(extra_build_arg) = &args.extra_build_args {
-        cmd.arg(extra_build_arg);
+    for build_arg in &args.extra_build_args {
+        cmd.arg(build_arg);
     }
 
     cmd.arg(args.derivation.as_str());
 
-    let stderr = cmd.output()?.stderr;
+    let output = cmd.output()?;
+    
+    if !output.status.success() {
+        stdout().write_all(&output.stderr)?;
+        exit(1);
+    }
+
+    let stderr = output.stderr;
 
     let cache_info = parse_log(stderr.as_slice())?;
 

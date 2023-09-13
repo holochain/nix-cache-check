@@ -19,7 +19,7 @@ runs:
   args:
     - --derivation
     - ${{ inputs.derivation }}
-    - --extra-build-args
-    - ${{ inputs.extra_build_args }}
     - --permit-build-derivations
     - ${{ join(inputs.permit_build_derivations, ',') }}
+    - --
+    - '${{ inputs.extra_build_args }}'
