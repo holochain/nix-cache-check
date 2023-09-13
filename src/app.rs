@@ -22,7 +22,7 @@ pub fn run_app() -> anyhow::Result<()> {
         .arg("raw");
 
     if let Ok(build_args) = std::env::var("EXTRA_BUILD_ARG") {
-        cmd.arg(build_args);
+        cmd.arg(build_args.trim_matches('\'').trim_matches('"'));
     }
 
     cmd.arg(std::env::var("DERIVATION")?);
