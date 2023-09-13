@@ -34,6 +34,7 @@ pub fn run_app() -> anyhow::Result<()> {
     })?;
 
     if !output.status.success() {
+        println!("Nix build command failed, dumping its logs");
         stdout().write_all(&output.stderr)?;
         exit(1);
     }
