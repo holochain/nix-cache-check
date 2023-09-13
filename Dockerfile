@@ -6,10 +6,10 @@ RUN cargo init --bin
 COPY Cargo.toml Cargo.lock ./
 RUN cargo build --locked --release
 COPY ./src ./src
-RUN cat ./src/main.rs
 RUN cargo install --locked --path .
-
 RUN cp /usr/local/cargo/bin/nix-cache-check /
+RUN /nix-cache-check
+
 ENTRYPOINT ["/nix-cache-check"]
 
 # FROM registry.hub.docker.com/library/alpine:3
