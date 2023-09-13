@@ -22,3 +22,7 @@ runs:
         DERIVATION: ${{ inputs.derivation }}
         EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
         PERMIT_BUILD_DERIVATIONS: ${{ inputs.permit_build_derivations }}
+
+branding:
+  icon: arrow-down-circle
+  color: green
