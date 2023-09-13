@@ -9,6 +9,7 @@ COPY ./src ./src
 RUN cargo install --locked --path .
 
 RUN cp /usr/local/cargo/bin/nix-cache-check /
+RUN cd / && type nix-cache-check
 ENTRYPOINT ["/nix-cache-check"]
 
 # FROM registry.hub.docker.com/library/alpine:3
