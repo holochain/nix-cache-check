@@ -11,11 +11,10 @@ use crate::parser::{parse_log, CacheInfo};
 #[command(version, about, long_about = None)]
 pub struct App {
     /// The derivation to be checked; passed directly to `nix build`
-    #[arg(long)]
     derivation: String,
 
     /// Comma-separated values containing the names of derivations to allow building rather than fetching
-    #[arg(long, value_parser = from_csv)]
+    #[arg(value_parser = from_csv)]
     permit_build_derivations: Option<HashSet<String>>,
 
     /// Extra args to be passed to `nix build`

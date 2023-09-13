@@ -17,9 +17,7 @@ runs:
   # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
   image: 'Dockerfile'
   args:
-    - --derivation
     - ${{ inputs.derivation }}
-    - --permit-build-derivations
     - ${{ join(inputs.permit_build_derivations, ',') }}
     - --
     - '${{ inputs.extra_build_args }}'
