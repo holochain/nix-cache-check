@@ -4,6 +4,8 @@ use std::{
     process::{exit, Stdio},
 };
 
+use anyhow::anyhow;
+
 use crate::parser::{parse_log, CacheInfo};
 
 fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
@@ -11,8 +13,6 @@ fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
 }
 
 pub fn run_app() -> anyhow::Result<()> {
-    println!("Running nix");
-
     let mut cmd = std::process::Command::new("nix");
     cmd.stderr(Stdio::piped())
         .arg("build")
@@ -27,7 +27,9 @@ pub fn run_app() -> anyhow::Result<()> {
 
     cmd.arg(std::env::var("DERIVATION")?);
 
-    let output = cmd.output()?;
+    let output = cmd.output().map_err(|e| {
+        anyhow!("Failed to spawn the Nix build: {:?}", e)
+    })?;
 
     if !output.status.success() {
         stdout().write_all(&output.stderr)?;
