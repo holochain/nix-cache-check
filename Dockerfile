@@ -1,5 +1,7 @@
 FROM registry.hub.docker.com/library/rust:1.72-alpine AS builder
 
+RUN apk add musl-dev
+
 WORKDIR /builder
 RUN cargo init --bin
 COPY Cargo.toml Cargo.lock ./
