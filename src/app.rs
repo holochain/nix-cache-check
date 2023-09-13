@@ -6,14 +6,19 @@ use std::{
 use clap::Parser;
 use crate::parser::{parse_log, CacheInfo};
 
+/// Check what derivations need to be built or fetched
 #[derive(Parser)]
+#[command(version, about, long_about = None)]
 pub struct App {
+    /// The derivation to be checked; passed directly to `nix build`
     #[arg(long)]
     derivation: String,
 
+    /// Extra args to be passed to `nix build`
     #[arg(long)]
     extra_build_args: Option<String>,
 
+    /// Comma-separated values containing the names of derivations to allow building rather than fetching
     #[arg(long, value_parser = from_csv)]
     permit_build_derivations: Option<HashSet<String>>,
 }
