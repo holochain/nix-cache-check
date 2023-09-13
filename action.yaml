@@ -16,7 +16,6 @@ runs:
   using: 'docker'
   # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
   image: 'Dockerfile'
-  entrypoint: nix-cache-check
   env:
     DERIVATION: ${{ inputs.derivation }}
     EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
