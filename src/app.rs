@@ -16,10 +16,6 @@ pub struct App {
     /// Comma-separated values containing the names of derivations to allow building rather than fetching
     #[arg(value_parser = from_csv)]
     permit_build_derivations: Option<HashSet<String>>,
-
-    /// Extra args to be passed to `nix build`
-    #[arg(last = true)]
-    extra_build_args: Vec<String>,
 }
 
 fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
@@ -35,8 +31,8 @@ pub fn run_app(args: App) -> anyhow::Result<()> {
         .arg("--log-format")
         .arg("raw");
 
-    for build_arg in &args.extra_build_args {
-        cmd.arg(build_arg);
+    if let Ok(build_args) = std::env::var("EXTRA_BUILD_ARG") {
+        cmd.arg(build_args);
     }
 
     cmd.arg(args.derivation.as_str());
