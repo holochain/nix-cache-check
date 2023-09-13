@@ -47,6 +47,8 @@ pub fn run_app() -> anyhow::Result<()> {
         cache_info.get_derivations_to_build().len(),
         cache_info.get_derivations_to_fetch().len()
     );
+    stdout().flush()?;
+    
     if validate(
         from_csv(std::env::var("PERMIT_BUILD_DERIVATIONS").unwrap_or_else(|_| "".to_string()).as_str())?,
         &cache_info,
