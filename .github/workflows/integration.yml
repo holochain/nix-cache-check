@@ -10,6 +10,9 @@ jobs:
     steps:
         - uses: actions/checkout@v4
         - uses: cachix/install-nix-action@v22
+        - uses: cachix/cachix-action@v12
+          with:
+            name: holochain-ci
         - name: Test
           uses: ./
           with:
