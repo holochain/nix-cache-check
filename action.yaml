@@ -11,7 +11,7 @@ inputs:
   permit_build_derivations:
     description: "The names of derivations which are permitted to be build rather than fetched from the cache"
     required: false
-    default: '[]'
+    default: ''
 runs:
   using: 'docker'
   # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
