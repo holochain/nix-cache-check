@@ -1,11 +1,9 @@
 FROM registry.hub.docker.com/library/rust:1.72-alpine AS builder
 
-RUN apk add musl-dev
-
 WORKDIR /builder
 RUN cargo init --bin
 COPY Cargo.toml Cargo.lock ./
-RUN cargo fetch --locked
+RUN cargo build --locked --release
 COPY ./src ./src
 RUN cargo install --locked --path .
 
