@@ -17,7 +17,9 @@ runs:
   steps:
     - name: Check
       shell: bash
-      run: cargo run
+      run: |
+        cargo install --locked --git https://github.com/ThetaSinner/nix-cache-check.git --tag v1
+        nix-cache-check
       env:
         DERIVATION: ${{ inputs.derivation }}
         EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
