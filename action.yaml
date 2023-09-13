@@ -13,10 +13,12 @@ inputs:
     required: false
     default: ''
 runs:
-  using: 'docker'
-  # image: 'ghcr.io/<your_username>/<your_repo_name>:v1'
-  image: 'Dockerfile'
-  env:
-    DERIVATION: ${{ inputs.derivation }}
-    EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
-    PERMIT_BUILD_DERIVATIONS: ${{ join(inputs.permit_build_derivations, ',') }}
+  using: 'composite'
+  steps:
+    - name: Check
+      shell: bash
+      run: cargo run
+      env:
+        DERIVATION: ${{ inputs.derivation }}
+        EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
+        PERMIT_BUILD_DERIVATIONS: ${{ join(inputs.permit_build_derivations, ',') }}
