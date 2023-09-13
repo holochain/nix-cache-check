@@ -7,6 +7,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN cargo fetch --locked
 COPY ./src ./src
 RUN cargo install --locked --path .
+RUN cp $(which nix-cache-check) /bin/
 
 ENTRYPOINT ["nix-cache-check"]
 
