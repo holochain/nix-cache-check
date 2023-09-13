@@ -22,7 +22,9 @@ pub fn run_app() -> anyhow::Result<()> {
         .arg("raw");
 
     if let Ok(build_args) = std::env::var("EXTRA_BUILD_ARG") {
-        cmd.arg(build_args.trim_matches('\'').trim_matches('"'));
+        for arg in build_args.split(" ") {
+            cmd.arg(arg);
+        }
     }
 
     cmd.arg(std::env::var("DERIVATION")?);
@@ -46,7 +48,7 @@ pub fn run_app() -> anyhow::Result<()> {
         cache_info.get_derivations_to_fetch().len()
     );
     if validate(
-        from_csv(std::env::var("PERMIT_BUILD_DERIVATIONS")?.as_str())?,
+        from_csv(std::env::var("PERMIT_BUILD_DERIVATIONS").unwrap_or_else(|_| "".to_string()).as_str())?,
         &cache_info,
     ) {
         println!("Validation passed!");
