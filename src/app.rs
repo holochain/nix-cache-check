@@ -62,6 +62,7 @@ pub fn run_app() -> anyhow::Result<()> {
             "To fetch: \n\t{}",
             cache_info.get_derivations_to_fetch().join("\n\t")
         );
+        return Err(anyhow!("Validation failed"));
     }
 
     Ok(())
