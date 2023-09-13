@@ -9,7 +9,7 @@ inputs:
     required: false
     default: ''
   permit_build_derivations:
-    description: "The names of derivations which are permitted to be build rather than fetched from the cache"
+    description: "The comma-separated names of derivations which are permitted to be built rather than fetched from the cache"
     required: false
     default: ''
 runs:
@@ -21,4 +21,4 @@ runs:
       env:
         DERIVATION: ${{ inputs.derivation }}
         EXTRA_BUILD_ARG: ${{ inputs.extra_build_args }}
-        PERMIT_BUILD_DERIVATIONS: ${{ join(inputs.permit_build_derivations, ',') }}
+        PERMIT_BUILD_DERIVATIONS: inputs.permit_build_derivations

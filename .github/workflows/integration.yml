@@ -17,4 +17,5 @@ jobs:
           uses: ./
           with:
             derivation: github:holochain/holochain#devShells.x86_64-darwin.holonix
-            extra_build_args: --override-input versions github:holochain/holochain?dir=versions/0_2              
+            extra_build_args: --override-input versions github:holochain/holochain?dir=versions/0_2
+            permit_build_derivations: hn-introspect,nix-shell
