@@ -1,5 +1,7 @@
 # nix-cache-check
 
+[![Integration](https://github.com/ThetaSinner/nix-cache-check/actions/workflows/integration.yml/badge.svg)](https://github.com/ThetaSinner/nix-cache-check/actions/workflows/integration.yml)
+
 A GitHub action to check whether a Nix flake is properly cached. It builds
 a derivation and fails if anything needs building rather than fetching
 from a remote cache. You can permit some derivations to be built using the
@@ -24,3 +26,5 @@ jobs:
         with:
           derivation: .#my-derivation
 ```
+
+There is also a working example (as long as the build is currently passing!) in the [integration test](https://github.com/ThetaSinner/nix-cache-check/blob/main/.github/workflows/integration.yml) for this action.
