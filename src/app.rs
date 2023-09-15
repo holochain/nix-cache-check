@@ -29,7 +29,6 @@ pub fn run_app() -> anyhow::Result<()> {
 
     cmd.arg(std::env::var("DERIVATION")?);
 
-
     println!("Starting Nix build");
     stdout().flush()?;
 
