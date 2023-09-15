@@ -29,9 +29,16 @@ pub fn run_app() -> anyhow::Result<()> {
 
     cmd.arg(std::env::var("DERIVATION")?);
 
+
+    println!("Starting Nix build");
+    stdout().flush()?;
+
     let output = cmd.output().map_err(|e| {
         anyhow!("Failed to spawn the Nix build: {:?}", e)
     })?;
+
+    println!("Finished Nix build");
+    stdout().flush()?;
 
     if !output.status.success() {
         println!("Nix build command failed, dumping its logs");
@@ -39,9 +46,16 @@ pub fn run_app() -> anyhow::Result<()> {
         exit(1);
     }
 
-    let stderr = output.stderr;
+    let stderr = String::from_utf8(output.stderr)?;
 
-    let cache_info = parse_log(stderr.as_slice())?;
+    let cache_info = match parse_log(stderr.as_str()) {
+        Ok(ci) => ci,
+        Err(e) => {
+            eprintln!("There was a problem parsing the input: {}", e);
+            eprintln!("The original input was: {}", stderr);
+            exit(1);
+        }
+    };
 
     println!(
         "Found [{}] to derivations build and [{}] to fetch",

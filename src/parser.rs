@@ -4,9 +4,11 @@ use nom::{
         complete::{newline, space1},
         is_newline,
     },
+    combinator::opt,
+    error::{context, convert_error, ContextError},
     multi::fold_many1,
-    sequence::tuple,
-    IResult,
+    sequence::{preceded, tuple},
+    Finish, IResult,
 };
 
 #[derive(Debug)]
@@ -25,13 +27,13 @@ impl CacheInfo {
     }
 }
 
-pub fn parse_log(log: &[u8]) -> anyhow::Result<CacheInfo> {
-    let (_, info) = match do_parse(log) {
+pub fn parse_log(log: &str) -> anyhow::Result<CacheInfo> {
+    let (_, info) = match do_parse(log).finish() {
         Ok(r) => r,
         Err(e) => {
             return Err(anyhow::anyhow!(
-                "Failed to parse {:?}",
-                e.map_input(|i| String::from_utf8(i.to_vec()))
+                "Failed to parse: {}",
+                convert_error(log, e)
             ));
         }
     };
@@ -39,72 +41,69 @@ pub fn parse_log(log: &[u8]) -> anyhow::Result<CacheInfo> {
     Ok(info)
 }
 
-fn do_parse(input: &[u8]) -> IResult<&[u8], CacheInfo> {
+fn do_parse<'a, E>(input: &'a str) -> IResult<&'a str, CacheInfo, E>
+where
+    E: nom::error::ParseError<&'a str> + ContextError<&'a str>,
+{
     match tuple((
-        take_until("these"),
-        take(5usize),
-        take_until("built:"),
-        take(6usize),
-        newline,
-        fold_many1(
-            parse_line,
+        opt(preceded(
+            context(
+                "start-of-built-derivations",
+                tuple((
+                    take_until("these"),
+                    take(5usize),
+                    take_until("built:"),
+                    take(6usize),
+                    newline,
+                )),
+            ),
+            fold_many1(
+                context("build-derivation-line", parse_line::<E>),
+                || vec![],
+                |mut acc, line| {
+                    acc.push(line);
+                    acc
+                },
+            ),
+        )),
+        opt(preceded(context(
+            "start-of-fetched-derivations",
+            tuple((
+                take_until("these "),
+                take(6usize),
+                take_until("fetched"),
+                take(7usize),
+                take_until(":"),
+                take(1usize),
+                newline,
+            )),
+        ), fold_many1(
+            context("fetch-derivation-line", parse_line::<E>),
             || vec![],
             |mut acc, line| {
                 acc.push(line);
                 acc
             },
-        ),
-        take_until("these"),
-        take(5usize),
-        take_until("fetched"),
-        take(7usize),
-        take_until(":"),
-        take(1usize),
-        newline,
-        fold_many1(
-            parse_line,
-            || vec![],
-            |mut acc, line| {
-                acc.push(line);
-                acc
-            },
-        ),
+        ))),
     ))(input)
     {
-        Ok((
-            rest,
-            (
-                _,
-                _these,
-                _,
-                _built,
-                _newline,
-                to_build,
-                _,
-                _these2,
-                _,
-                _fetched,
-                _,
-                _colon,
-                _newline2,
-                to_fetch,
-            ),
-        )) => Ok((
+        Ok((rest, (to_build, to_fetch))) => Ok((
             rest,
             CacheInfo {
-                derivations_to_build: to_build,
-                derivations_to_fetch: to_fetch,
+                derivations_to_build: to_build.unwrap_or_else(|| vec![]),
+                derivations_to_fetch: to_fetch.unwrap_or_else(|| vec![]),
             },
         )),
         Err(e) => Err(e),
     }
 }
 
-fn parse_line(input: &[u8]) -> IResult<&[u8], String> {
-    match tuple((space1, take_till(is_newline), newline))(input) {
-        Ok((rest, (_sp, derivation, _newline))) => {
-            Ok((rest, String::from_utf8(derivation.to_vec()).unwrap()))
-        }
+fn parse_line<'a, E>(input: &'a str) -> IResult<&'a str, String, E>
+where
+    E: nom::error::ParseError<&'a str>,
+{
+    match tuple((space1, take_till(|c| is_newline(c as u8)), newline))(input) {
+        Ok((rest, (_sp, derivation, _newline))) => Ok((rest, derivation.to_string())),
         Err(e) => Err(e),
     }
 }
