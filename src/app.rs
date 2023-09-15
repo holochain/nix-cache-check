@@ -74,6 +74,8 @@ pub fn run_app() -> anyhow::Result<()> {
 pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInfo) -> anyhow::Result<bool> {
     let mut all_passed = true;
 
+    let mut permits_used = HashSet::new();
+
     for to_build in cache_info.get_derivations_to_build() {
         let to_build_name: String = to_build
             .strip_suffix(".drv").ok_or(anyhow!("Not a derivation? {}", to_build))?
@@ -84,6 +86,7 @@ pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInf
 
         if permit_build_derivations.contains(to_build_name.as_str()) {
             println!("Permitting [{}] to be built", to_build);
+            permits_used.insert(to_build_name);
             continue;
         }
 
@@ -92,6 +95,10 @@ pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInf
             to_build
         );
         all_passed = false;
+    }
+
+    for unused in permit_build_derivations.difference(&permits_used) {
+        println!("Warning: You have marked {} as permitted to be built but it is either cached or no longer part of this derivation", unused);
     }
 
     Ok(all_passed)
