@@ -22,7 +22,7 @@ jobs:
         with:
           name: my-cache
       - name: Check the cache
-        uses: ThetaSinner/nix-cache-check@v1
+        uses: holochain/nix-cache-check@v1
         with:
           derivation: .#my-derivation
 ```
