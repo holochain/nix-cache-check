@@ -1,3 +1,7 @@
+# Moved!
+
+This repository has moved to https://github.com/holochain/nix-cache-check
+
 # nix-cache-check
 
 [![Integration](https://github.com/ThetaSinner/nix-cache-check/actions/workflows/integration.yml/badge.svg)](https://github.com/ThetaSinner/nix-cache-check/actions/workflows/integration.yml)
