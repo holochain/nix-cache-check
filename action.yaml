@@ -18,7 +18,7 @@ runs:
     - name: Check
       shell: bash
       run: |
-        cargo install --locked --git https://github.com/ThetaSinner/nix-cache-check.git --tag v1
+        cargo install --locked --git https://github.com/holochain/nix-cache-check.git --tag v1
         nix-cache-check
       env:
         DERIVATION: ${{ inputs.derivation }}
