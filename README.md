@@ -1,4 +1,4 @@
-# Moved!
+# Moved
 
 This repository has moved to https://github.com/holochain/nix-cache-check
 
