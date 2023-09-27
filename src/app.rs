@@ -9,7 +9,14 @@ use anyhow::anyhow;
 use crate::parser::{parse_log, CacheInfo};
 
 fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
-    Ok(input.split(",").map(|v| v.trim().to_owned()).collect())
+    Ok(input.split(",").filter_map(|v| {
+        let x = v.trim().to_owned();
+        if !x.is_empty() {
+            Some(x)
+        } else {
+            None
+        }
+    }).collect())
 }
 
 pub fn run_app() -> anyhow::Result<()> {
@@ -23,7 +30,9 @@ pub fn run_app() -> anyhow::Result<()> {
 
     if let Ok(build_args) = std::env::var("EXTRA_BUILD_ARG") {
         for arg in build_args.split(" ") {
-            cmd.arg(arg);
+            if !arg.trim().is_empty() {
+                cmd.arg(arg);
+            }
         }
     }
 
