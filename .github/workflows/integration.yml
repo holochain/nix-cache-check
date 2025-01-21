@@ -3,7 +3,6 @@ name: Integration
 on:
   push:
     tags: [ v1 ]
-  pull_request: {}
 
 jobs:
   integration:
