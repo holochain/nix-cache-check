@@ -17,4 +17,4 @@ jobs:
         - name: Test
           uses: ./
           with:
-            derivation: github:holochain/holonix?ref=main-0.4
+            derivation: github:holochain/holonix?ref=main-0.4#devShells.x86_64-linux.default
