@@ -9,14 +9,17 @@ use anyhow::anyhow;
 use crate::parser::{parse_log, CacheInfo};
 
 fn from_csv(input: &str) -> anyhow::Result<HashSet<String>> {
-    Ok(input.split(",").filter_map(|v| {
-        let x = v.trim().to_owned();
-        if !x.is_empty() {
-            Some(x)
-        } else {
-            None
-        }
-    }).collect())
+    Ok(input
+        .split(",")
+        .filter_map(|v| {
+            let x = v.trim().to_owned();
+            if !x.is_empty() {
+                Some(x)
+            } else {
+                None
+            }
+        })
+        .collect())
 }
 
 pub fn run_app() -> anyhow::Result<()> {
@@ -41,9 +44,9 @@ pub fn run_app() -> anyhow::Result<()> {
     println!("Starting Nix build");
     stdout().flush()?;
 
-    let output = cmd.output().map_err(|e| {
-        anyhow!("Failed to spawn the Nix build: {:?}", e)
-    })?;
+    let output = cmd
+        .output()
+        .map_err(|e| anyhow!("Failed to spawn the Nix build: {:?}", e))?;
 
     println!("Finished Nix build");
     stdout().flush()?;
@@ -73,7 +76,11 @@ pub fn run_app() -> anyhow::Result<()> {
     stdout().flush()?;
 
     if validate(
-        from_csv(std::env::var("PERMIT_BUILD_DERIVATIONS").unwrap_or_else(|_| "".to_string()).as_str())?,
+        from_csv(
+            std::env::var("PERMIT_BUILD_DERIVATIONS")
+                .unwrap_or_else(|_| "".to_string())
+                .as_str(),
+        )?,
         &cache_info,
     )? {
         println!("Validation passed!");
@@ -93,14 +100,18 @@ pub fn run_app() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn validate(permit_build_derivations: HashSet<String>, cache_info: &CacheInfo) -> anyhow::Result<bool> {
+pub fn validate(
+    permit_build_derivations: HashSet<String>,
+    cache_info: &CacheInfo,
+) -> anyhow::Result<bool> {
     let mut all_passed = true;
 
     let mut permits_used = HashSet::new();
 
     for to_build in cache_info.get_derivations_to_build() {
         let to_build_name: String = to_build
-            .strip_suffix(".drv").ok_or(anyhow!("Not a derivation? {}", to_build))?
+            .strip_suffix(".drv")
+            .ok_or(anyhow!("Not a derivation? {}", to_build))?
             .split("-")
             .skip(1)
             .collect::<Vec<&str>>()

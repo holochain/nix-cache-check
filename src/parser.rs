@@ -59,39 +59,42 @@ where
             ),
             fold_many1(
                 context("build-derivation-line", parse_line::<E>),
-                || vec![],
+                Vec::new,
                 |mut acc, line| {
                     acc.push(line);
                     acc
                 },
             ),
         )),
-        opt(preceded(context(
-            "start-of-fetched-derivations",
-            tuple((
-                take_until("these "),
-                take(6usize),
-                take_until("fetched"),
-                take(7usize),
-                take_until(":"),
-                take(1usize),
-                newline,
-            )),
-        ), fold_many1(
-            context("fetch-derivation-line", parse_line::<E>),
-            || vec![],
-            |mut acc, line| {
-                acc.push(line);
-                acc
-            },
-        ))),
+        opt(preceded(
+            context(
+                "start-of-fetched-derivations",
+                tuple((
+                    take_until("these "),
+                    take(6usize),
+                    take_until("fetched"),
+                    take(7usize),
+                    take_until(":"),
+                    take(1usize),
+                    newline,
+                )),
+            ),
+            fold_many1(
+                context("fetch-derivation-line", parse_line::<E>),
+                Vec::new,
+                |mut acc, line| {
+                    acc.push(line);
+                    acc
+                },
+            ),
+        )),
     ))(input)
     {
         Ok((rest, (to_build, to_fetch))) => Ok((
             rest,
             CacheInfo {
-                derivations_to_build: to_build.unwrap_or_else(|| vec![]),
-                derivations_to_fetch: to_fetch.unwrap_or_else(|| vec![]),
+                derivations_to_build: to_build.unwrap_or_else(Vec::new),
+                derivations_to_fetch: to_fetch.unwrap_or_else(Vec::new),
             },
         )),
         Err(e) => Err(e),

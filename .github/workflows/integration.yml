@@ -9,13 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
-        - uses: cachix/install-nix-action@v22
-        - uses: cachix/cachix-action@v12
+        - uses: cachix/install-nix-action@v30
+        - uses: cachix/cachix-action@v15
           with:
             name: holochain-ci
         - name: Test
           uses: ./
           with:
-            derivation: github:holochain/holochain#devShells.x86_64-linux.holonix
-            extra_build_args: --refresh --override-input versions github:holochain/holochain?dir=versions/0_2
-            permit_build_derivations: hn-introspect,nix-shell,rust-default-1.66.1,inheritCargoArtifactsHook,cargoHelperFunctionsHook
+            derivation: github:holochain/holonix?ref=main-0.4#devShells.x86_64-linux.default
